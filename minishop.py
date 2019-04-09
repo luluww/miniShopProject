@@ -35,43 +35,48 @@ product_dict={'food':{'apple':100,
                      } 
              }
              
+# get the list of all products sold in this shop
 product_list=[]
 for k,v in product_dict.items():
     for k1,v1 in v.items():
         product_list.append(k1)
 
-#customer buys the product        
+#buy behavior        
 def customer_buy(product,num):
-    for k,v in product_dict.items():
-        if product in v.keys():
-            if num<=v[product]:
-                v[product]=v[product]-num
-                return 1
-    return 0
+    with cashier_busy:
+        for k,v in product_dict.items():
+            if product in v.keys():
+                if num<=v[product]:
+                    v[product]=v[product]-num
+                    return 1
+        return 0
 
-#random define what and how many this customer to buy
-def random_buy():
+#create a random customer to buy stuffs
+def customer():
     return random.choice(product_list),random.choice(range(100))
 
-def customer():
+def cashier():
     while True:
         product,num=q.get()
         if customer_buy(product,num):
-            print("a customer bought %n %p",num,product)
+            print("a customer bought %s %s at # %s cashier."%(num,product,threading.current_thread().name))
         else:
-            print("sorry, the purchase could not be completed!")
+            print("sorry, the purchase could not be completed! at %s"%(threading.current_thread().name))
         q.task_done()
 
+cashier_busy=threading.Lock()
 
 q=Queue()
-
-for c in range(10):
-    q.put(random_buy())
-    
-for cashier in range(3):
-    t=threading.Thread(target=customer)
+  
+#create three threads to represent three cashiers
+for i in range(10):
+    t=threading.Thread(target=cashier)
     t.daemon=True
     t.start()
+    
+#create 10 customers
+for c in range(10):
+    q.put(customer())
 
 q.join()
         

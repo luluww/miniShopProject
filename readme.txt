@@ -8,4 +8,8 @@ create ReadMe.txt and design the project
 
 created the base, not finish yet
 
+2019-4-8
+-fix print problem
+-clear the procedure
+
 
