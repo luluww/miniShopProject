@@ -12,4 +12,8 @@ created the base, not finish yet
 -fix print problem
 -clear the procedure
 
+2019-4-12
+-modified minishop.py
+-detail to do in the future
+
 
